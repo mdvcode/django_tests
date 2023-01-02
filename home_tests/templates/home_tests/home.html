@@ -5,6 +5,34 @@
     <title>Title</title>
 </head>
 <body>
+<div class="col">
+					<h2 style="color: #08055d" class="section_title text-center">Filter</h2>
+				</div>
+            <div class="row">
+                <div class="col-md-7">
+                    <form class="select2-selection--multiple" method="post">
+                        {% csrf_token %}
+                    <div class="row">
+                            <div class="col-md-5">
+                                <select name="language" class="selectpicker" multiple data-live-search="true">
+                                    {% for language in languages %}
+                                        <option value="{{language.id}}">{{language.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-outline-primary">Filter</button>
+                        </div>
+        </div>
+     </form>
+    </div>
+</div>
 
+<hr>
+<div>
+    {% for test in tests %}
+<li><a style='color: #2e21df' href="{{ test.link }}" target="_blank">{{test.link}}</a></li>
+{%endfor%}
+</div>
 </body>
 </html>

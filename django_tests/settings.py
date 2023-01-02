@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'home_tests',
 ]
 
+SITE_ID = 1
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

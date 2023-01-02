@@ -1,11 +1,5 @@
-import random
 from django.contrib.auth import logout as auth_logout, authenticate
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
-from django.core.mail import send_mail
-from django.http import Http404
 from django.shortcuts import redirect
 from django.shortcuts import render
 from users.forms import RegisterForm
