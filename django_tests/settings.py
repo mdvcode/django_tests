@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'django_tests.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django_tests',
+        'NAME': 'tests_django',
         'USER': 'user',
         'PASSWORD': 'password',
         'HOST': '127.0.0.1',

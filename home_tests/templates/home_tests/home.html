@@ -28,11 +28,15 @@
     </div>
 </div>
 
-<hr>
-<div>
-    {% for test in tests %}
-<li><a style='color: #2e21df' href="{{ test.link }}" target="_blank">{{test.link}}</a></li>
-{%endfor%}
-</div>
+{% if question_list %}
+    <ul>
+    {% for question in question_list %}
+        <li><a href="/home_tests/{{ question.id }}/">{{ question.question_text }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
+
 </body>
 </html>

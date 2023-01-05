@@ -1,4 +1,4 @@
-from django.contrib.auth import logout as auth_logout, authenticate
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -16,13 +16,7 @@ def signup(request):
     return render(request, 'users/signup.html', {'form': form})
 
 
-def logout(request):
-    auth_logout(request)
-    return redirect('users:login')
-
-
 def login(request):
-    logout(request)
     if request.POST:
         username = request.POST['username']
         password = request.POST['password']
