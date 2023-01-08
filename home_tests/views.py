@@ -1,13 +1,6 @@
-import requests
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.contrib.postgres.search import SearchVector
-from django.contrib.sites.models import Site
-from django.core.handlers.wsgi import WSGIRequest
-from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views import generic
 
 from home_tests.forms import FilterPostForm, QuestionForm
 from home_tests.models import Language, Question, Choice
@@ -53,9 +46,20 @@ def vote(request, question_id):
             'error_message': "You didn't select a choice.",
         })
     else:
-        selected_choice.votes += 1
-        selected_choice.save()
-        return redirect('home_tests:home')
+        if selected_choice.votes == question.answer:
+            print('correct')
+            selected_choice.correct_votes += 1
+            # selected_choice.save()
+        elif selected_choice.votes != question.answer:
+            print('not correct')
+            selected_choice.votes += 1
+    selected_choice.save()
+    return HttpResponseRedirect(reverse('home_tests:results', args=(question.id,)))
+
+
+def results(request, question_id):
+    question = Question.objects.get(pk=question_id)
+    return render(request, 'home_tests/results.html', {'question': question})
 
 
 

@@ -5,6 +5,7 @@
     <title>Title</title>
 </head>
 <body>
+{% if user.is_authenticated %}
 <div class="col">
 					<h2 style="color: #08055d" class="section_title text-center">Filter</h2>
 				</div>
@@ -36,6 +37,11 @@
     </ul>
 {% else %}
     <p>No polls are available.</p>
+{% endif %}
+
+{% else %}
+<li><a href="{% url 'users:login' %}">Login</a></li>
+<li><a href="{% url 'users:signup' %}">Signup</a></li>
 {% endif %}
 
 </body>

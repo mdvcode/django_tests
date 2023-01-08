@@ -13,16 +13,19 @@ class Language(models.Model):
 class Question(models.Model):
     objects = None
     language = models.ForeignKey(Language, null=True, blank=True, on_delete=models.CASCADE)
-    question_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('date published')
+    question_text = models.CharField(max_length=200, null=True, blank=True)
+    answer = models.CharField(max_length=250, null=True, blank=True)
+    pub_date = models.DateTimeField('date published', null=True, blank=True)
 
 
 class Choice(models.Model):
     DoesNotExist = None
     language = models.ForeignKey(Language, null=True, blank=True, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    choice_text = models.CharField(max_length=200)
-    votes = models.IntegerField(default=0)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True, blank=True)
+    choice_text = models.CharField(max_length=250, null=True, blank=True)
+    votes = models.IntegerField(default=0, null=True, blank=True)
+    correct_votes = models.IntegerField(default=0, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
 
 
