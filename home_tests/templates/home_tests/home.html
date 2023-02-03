@@ -1,48 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-{% if user.is_authenticated %}
-<div class="col">
-					<h2 style="color: #08055d" class="section_title text-center">Filter</h2>
-				</div>
-            <div class="row">
-                <div class="col-md-7">
-                    <form class="select2-selection--multiple" method="post">
-                        {% csrf_token %}
-                    <div class="row">
-                            <div class="col-md-5">
-                                <select name="language" class="selectpicker" multiple data-live-search="true">
-                                    {% for language in languages %}
-                                        <option value="{{language.id}}">{{language.name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-outline-primary">Filter</button>
-                        </div>
-        </div>
-     </form>
+{% extends 'base.html'%}
+{% load static %} {% block content %}
+
+<div id="index-section1">
+<!--    <a href="#index-section2" class="btn btn-info categoryButton" id="">Choose Category</a>-->
+<div id="index-section2">
+
+<div class="container mt-5 pt-5">
+  <h4 class="text-center mt-lg-5">Select a category</h4>
+  <div class="row mt-lg-5">
+    {% for category in categories %}
+    <div class="col">
+      <a href="{{category.id}}" class="btn btn-primary"
+        >{{category.category}}</a>
+      <br />
     </div>
-</div>
-
-{% if question_list %}
-    <ul>
-    {% for question in question_list %}
-        <li><a href="/home_tests/{{ question.id }}/">{{ question.question_text }}</a></li>
     {% endfor %}
-    </ul>
-{% else %}
-    <p>No polls are available.</p>
-{% endif %}
+  </div>
+</div>
+<hr style="height:1px;border-width:0;color:gray;background-color:gray; ">
 
-{% else %}
-<li><a href="{% url 'users:login' %}">Login</a></li>
-<li><a href="{% url 'users:signup' %}">Signup</a></li>
-{% endif %}
-
-</body>
-</html>
+</div>
+    {% endblock content %}
+    </div>

@@ -1,25 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>{{ question.question_text }}</h1>
-
-<form action="{% url 'home_tests:vote' question.id %}" method="post">
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div id="section1">
+<div class="container mt-5 pt-5">
+<form action="" method="post">
 {% csrf_token %}
-{% for choice in question.choice_set.all %}
-    <input type="radio" name="choice" value="{{ choice.id }}">
-    <label >{{ choice.choice_text }}</label><br>
+{% for question in page_obj %}
+  <p>{{question.question}}</p>
+  <div class="form-check">
+  <input class="form-check-input" type="radio" name="option_{{question.id}}" id="option_one_{{question.id}}" value="{{question.option_one}}">
+    {{question.option_one}}
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="option_{{question.id}}" id="option_two_{{question.id}}" value="{{question.option_two}}">
+    {{question.option_two}}
+  </label>
+</div>
 {% endfor %}
-<input type="submit" value="Vote">
+  <input class="btn btn-primary check-btn" type="submit" value="Check" id="check"/>
 </form>
+</div>
+</div>
 
 
+    <br><br>
+<hr style="height:1px;color:gray;background-color:gray;">
+</div>
+<div class="container">
+  <div class="pagination-btns">
+    <ol class="pagination align-right mr-auto">
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a id="next-btn" class="page-link btn btn-success" href="?page={{ page_obj.next_page_number }}" id="next-button" >Next</a>
+      </li>
+      {% endif %}
+            <li class="page-item"><a style='color: #2e21df' href="{% url 'home_tests:home' %}">Finish</a></li>
+
+          <a href="#section2" class="btn btn-success show-result-btn ml-auto" id="show-result-btn">Show Results</a>
+          {% comment %} <input type="button" name="" id="dummy" value="dummy button"> {% endcomment %}
+    </ol>
+Question {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+</div>
+</div>
 
 
+<div  id="section2">
+<div class="card text-white bg-secondary mb-3 quizresults">
+    <div class="card-header"><h3>Results</h3></div>
+    <div class="card-body">
+    <div class="container">
+    <div class="row">
+      <h6 class="card-title col-3">Quiz Category</h6>
+      {% for question in page_obj %}
+      <h6 class="card-title col-8">{{question.catalog}} </h6>
+      {% endfor %}
+        <div class="card-body">
+                <p class="card-text">Percentage: {{percent}}%</p>
+                <p class="card-text">Correct answers: {{correct_user_answers}}</p>
+                <p class="card-text">Incorrect answers: {{false_answers}}</p>
+            </div>
+    </div>
+    </div>
+    <hr>
 
 
-</body>
-</html>
+    </div>
+  </div>
+
+</div>
+{% endblock content %}

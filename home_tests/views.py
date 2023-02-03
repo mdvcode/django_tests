@@ -1,65 +1,50 @@
-from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.urls import reverse
 
-from home_tests.forms import FilterPostForm, QuestionForm
-from home_tests.models import Language, Question, Choice
+from .models import Catalog, Question
+from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib import messages
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.contrib.auth.decorators import login_required
 
 
+@login_required(login_url='/users/login/')
 def home(request):
-    question_list = Question.objects.order_by('-pub_date')[:5]
-    languages = Language.objects.all()
-    form_filter = FilterPostForm
-    if request.POST:
-        form_filter = FilterPostForm(request.POST)
-        if form_filter.is_valid():
-            language = form_filter.cleaned_data.get('language')
-            language_id = []
-            for item in language:
-                language_id.append(item.id)
-            if len(language_id) > 0:
-                question_list = Question.objects.filter(language_id__in=language_id)
-        else:
-            form_filter = FilterPostForm
-    return render(request, 'home_tests/home.html', context={'question_list': question_list, 'languages': languages,
-                                                            'form_filter': form_filter})
+    categories = Catalog.objects.all()
+    context = {'categories': categories}
+    return render(request, 'home_tests/home.html', context)
 
 
-def question(request, question_id):
-    question = Question.objects.get(pk=question_id)
-    if request.method == "POST":
-        form = QuestionForm(data=request.POST)
-        if form.is_valid():
-            form.save()
-    else:
-        form = QuestionForm
-    return render(request, 'home_tests/question.html', {'question': question, 'form': form})
+@login_required(login_url='/users/login/')
+def take_quiz(request, pk):
+    questions = Question.objects.filter(catalog=pk).order_by('-created_at')
+    paginator = Paginator(questions, 4)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {'questions': questions, 'page_obj': page_obj, }
+    if request.method == 'GET':
+        try:
+            questions = paginator.page(page_number)
+        except PageNotAnInteger:
+            questions = paginator.page(1)
+        except EmptyPage:
+            questions = paginator.page(paginator.num_pages)
+        return render(request, 'home_tests/question.html', context)
+    if request.method == 'POST':
+        correct_user_answers = 0
+        total_questions = questions.count()
+        false_answers = 0
+        for question in questions:
+            user_answer = request.POST.get(f"option_{question.id}")
+            correct_answer = question.answer
+            if user_answer == correct_answer:
+                correct_user_answers += 1
+            else:
+                false_answers += 1
+        percent = (correct_user_answers * 100) / total_questions
+        context = {'percent': percent, 'correct_user_answers': correct_user_answers, 'false_answers': false_answers,
+                   'total_questions': total_questions, 'questions': questions}
+        return render(request, 'home_tests/question.html', context)
 
-
-def vote(request, question_id):
-    question = Question.objects.get(pk=question_id)
-    try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
-        return render(request, 'home_tests/question.html', {
-            'question': question,
-            'error_message': "You didn't select a choice.",
-        })
-    else:
-        if selected_choice.votes == question.answer:
-            print('correct')
-            selected_choice.correct_votes += 1
-            # selected_choice.save()
-        elif selected_choice.votes != question.answer:
-            print('not correct')
-            selected_choice.votes += 1
-    selected_choice.save()
-    return HttpResponseRedirect(reverse('home_tests:results', args=(question.id,)))
-
-
-def results(request, question_id):
-    question = Question.objects.get(pk=question_id)
-    return render(request, 'home_tests/results.html', {'question': question})
 
 
 
